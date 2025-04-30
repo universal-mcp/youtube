@@ -30,10 +30,9 @@ class YoutubeApp(APIApplication):
         startTimeBefore=None,
     ) -> Any:
         """
-        Retrieves job reports for a specific job based on provided filters and parameters.
-
+        Retrieves job reports for a specified job based on provided filters and parameters.
+        
         Args:
-            self: The instance of the class on which the method is being called.
             jobId: The unique identifier for the job whose reports are to be retrieved.
             createdAfter: Optional; filter to include only reports created after this date (ISO 8601 format).
             onBehalfOfContentOwner: Optional; for content owners wanting to access reports on behalf of another user.
@@ -41,9 +40,15 @@ class YoutubeApp(APIApplication):
             pageToken: Optional; a token identifying the page of results to return.
             startTimeAtOrAfter: Optional; filter to include only reports starting at or after this date-time (ISO 8601 format).
             startTimeBefore: Optional; filter to include only reports with a start time before this date-time (ISO 8601 format).
-
+        
         Returns:
             A JSON object containing the job reports matching the provided criteria.
+        
+        Raises:
+            ValueError: Raised if the required 'jobId' parameter is missing.
+        
+        Tags:
+            retrieve, report, job-management, important, batch
         """
         if jobId is None:
             raise ValueError("Missing required parameter 'jobId'")
@@ -68,16 +73,22 @@ class YoutubeApp(APIApplication):
         self, jobId, reportId, onBehalfOfContentOwner=None
     ) -> Any:
         """
-        Retrieves a report for a specified job using the jobId and reportId.
-
+        Retrieves a specific report associated with a job using the provided job and report identifiers.
+        
         Args:
-            self: The instance of the class on which this method is called.
-            jobId: The unique identifier for the job associated with the report.
-            reportId: The unique identifier for the report to retrieve.
-            onBehalfOfContentOwner: Optional; if specified, the request is performed on behalf of the content owner associated with this parameter.
-
+            jobId: The unique identifier for the job containing the report (required).
+            reportId: The unique identifier for the report to fetch (required).
+            onBehalfOfContentOwner: Optional; specifies the content owner for whom the request is made.
+        
         Returns:
-            A JSON object containing the details of the requested report.
+            A JSON object containing the fetched report details.
+        
+        Raises:
+            ValueError: Raised if 'jobId' or 'reportId' is not provided.
+            requests.HTTPError: Raised if the API request fails (e.g., invalid permissions or resource not found).
+        
+        Tags:
+            retrieve, report, job, api, json, important
         """
         if jobId is None:
             raise ValueError("Missing required parameter 'jobId'")
@@ -95,14 +106,21 @@ class YoutubeApp(APIApplication):
 
     def delete_jobs_job(self, jobId, onBehalfOfContentOwner=None) -> Any:
         """
-        Deletes a job with the specified job ID, optionally acting on behalf of a content owner.
-
+        Deletes a job with the specified ID, optionally acting on behalf of a content owner.
+        
         Args:
-            jobId: The unique identifier of the job to be deleted. Must not be None.
-            onBehalfOfContentOwner: Optional. The ID of the content owner on whose behalf the request is made.
-
+            jobId: The unique identifier of the job to delete. Required.
+            onBehalfOfContentOwner: Optional. Content owner ID for delegated authorization.
+        
         Returns:
-            Returns the JSON response of the delete operation as a Python dictionary.
+            JSON response from the API as a Python dictionary.
+        
+        Raises:
+            ValueError: Raised when jobId is None.
+            requests.exceptions.HTTPError: Raised for failed HTTP requests (e.g., invalid job ID, permission errors).
+        
+        Tags:
+            delete, jobs, async_job, management, important
         """
         if jobId is None:
             raise ValueError("Missing required parameter 'jobId'")
@@ -124,16 +142,22 @@ class YoutubeApp(APIApplication):
         pageToken=None,
     ) -> Any:
         """
-        Retrieves a list of jobs from the server, optionally filtering by specified query parameters.
-
+        Retrieves a list of jobs from the server with optional filtering by query parameters.
+        
         Args:
-            includeSystemManaged: Optional; a boolean indicating whether to include system managed jobs in the result.
-            onBehalfOfContentOwner: Optional; a string representing the content owner on behalf of which the request is made.
-            pageSize: Optional; an integer specifying the number of jobs to return per page.
-            pageToken: Optional; a string representing the token to specify the start of the page for paginated results.
-
+            includeSystemManaged: Optional boolean indicating whether to include system-managed jobs.
+            onBehalfOfContentOwner: Optional string representing the content owner on behalf of which the request is made.
+            pageSize: Optional integer specifying the number of jobs per page.
+            pageToken: Optional string for paginated results page token.
+        
         Returns:
-            A JSON-decoded response containing the list of jobs and related metadata.
+            JSON-decoded response containing the list of jobs and related metadata.
+        
+        Raises:
+            HTTPError: Raised if the server returns an unsuccessful status code.
+        
+        Tags:
+            list, scrape, management, important
         """
         url = f"{self.base_url}/v1/jobs"
         query_params = {
@@ -153,12 +177,19 @@ class YoutubeApp(APIApplication):
     def get_media_resource_name(self, resourceName) -> Any:
         """
         Retrieves a media resource by name and returns its JSON representation.
-
+        
         Args:
-            resourceName: The name of the media resource to be retrieved. Cannot be None.
-
+            resourceName: The name of the media resource to retrieve. Required and cannot be None.
+        
         Returns:
-            The JSON representation of the media resource.
+            JSON-formatted data representing the media resource.
+        
+        Raises:
+            ValueError: If 'resourceName' is None.
+            requests.exceptions.HTTPError: If the HTTP request fails, such as a 404 for a non-existent resource.
+        
+        Tags:
+            retrieve, media, json, http, get, important
         """
         if resourceName is None:
             raise ValueError("Missing required parameter 'resourceName'")
@@ -176,16 +207,22 @@ class YoutubeApp(APIApplication):
         pageToken=None,
     ) -> Any:
         """
-        Retrieves a list of report types from the API with optional filtering and pagination.
-
+        Retrieves a paginated list of report types from the API with optional filtering.
+        
         Args:
-            includeSystemManaged: Optional; a boolean flag indicating if system-managed report types should be included.
-            onBehalfOfContentOwner: Optional; a string that specifies the content owner for whom the user is acting on behalf of.
-            pageSize: Optional; an integer that defines the number of results to return per page.
-            pageToken: Optional; a string token that indicates a specific page of results to retrieve.
-
+            includeSystemManaged: Boolean indicating whether to include system-managed report types in results.
+            onBehalfOfContentOwner: Content owner ID for delegated authority requests.
+            pageSize: Maximum number of items to return per response page.
+            pageToken: Token identifying a specific results page for pagination.
+        
         Returns:
-            A JSON object containing the list of report types available from the API.
+            Dictionary containing report type entries and pagination details, typically including 'items' list and 'nextPageToken' if applicable.
+        
+        Raises:
+            HTTPError: If the API request fails due to network issues, authentication problems, or invalid parameters.
+        
+        Tags:
+            retrieve, list, api-resource, filtering, pagination, important, report-management
         """
         url = f"{self.base_url}/v1/reportTypes"
         query_params = {
@@ -206,15 +243,21 @@ class YoutubeApp(APIApplication):
         self, id=None, onBehalfOf=None, onBehalfOfContentOwner=None
     ) -> Any:
         """
-        Deletes captions from a specified resource.
-
+        Deletes specified captions from a YouTube resource and returns the API response.
+        
         Args:
-            id: Optional; the unique identifier for the caption resource to delete.
-            onBehalfOf: Optional; a parameter to identify the user for whom the request is made.
-            onBehalfOfContentOwner: Optional; a parameter to specify the content owner for whom the request is made.
-
+            id: Optional unique identifier for the caption resource to delete.
+            onBehalfOf: Optional parameter identifying the user on whose behalf the request is made.
+            onBehalfOfContentOwner: Optional parameter specifying the content owner authorizing the request.
+        
         Returns:
-            Returns the response JSON object after deleting the caption resource.
+            JSON response containing the result of the DELETE operation from the YouTube API.
+        
+        Raises:
+            HTTPError: Raised when the HTTP request fails, such as invalid ID, authentication failures, or API limitations exceeded.
+        
+        Tags:
+            delete, captions, api, management, important
         """
         url = f"{self.base_url}/captions"
         query_params = {
@@ -234,17 +277,24 @@ class YoutubeApp(APIApplication):
         self, id, onBehalfOf=None, onBehalfOfContentOwner=None, tfmt=None, tlang=None
     ) -> Any:
         """
-        Retrieves captions for a specified video by its ID, optionally allowing additional query customizations.
-
+        Retrieves caption tracks for a specified video ID from a remote API, supporting optional query parameters for request customization.
+        
         Args:
-            id: The unique identifier for the video whose captions are to be retrieved. This parameter is mandatory.
-            onBehalfOf: The ID of the user on whose behalf the request is made. Defaults to None.
-            onBehalfOfContentOwner: The ID of the content owner on whose behalf the request is made. Defaults to None.
-            tfmt: The format of the caption track, such as 'srt' or 'ttml'. Defaults to None.
-            tlang: The language of the caption track, specified as a language code. Defaults to None.
-
+            id: The unique identifier for the target video (required)
+            onBehalfOf: ID of the user on whose behalf the request is made (default: None)
+            onBehalfOfContentOwner: ID of the content owner authorizing the request (default: None)
+            tfmt: Caption format code (e.g., 'srt', 'ttml') (default: None)
+            tlang: Language code for caption localization (default: None)
+        
         Returns:
-            A JSON object containing the captions data for the specified video.
+            Parsed JSON response containing caption data
+        
+        Raises:
+            ValueError: Raised when required 'id' parameter is missing
+            requests.exceptions.HTTPError: Raised for failed API requests (4XX/5XX status codes)
+        
+        Tags:
+            retrieve, captions, api-client, async-job, important
         """
         if id is None:
             raise ValueError("Missing required parameter 'id'")
@@ -266,12 +316,18 @@ class YoutubeApp(APIApplication):
     def delete_comments(self, id=None) -> Any:
         """
         Deletes a comment or comments from the server based on the specified ID.
-
+        
         Args:
             id: Optional ID of the comment to be deleted. If not provided, and based on implementation, all comments may be deleted.
-
+        
         Returns:
             The JSON response from the server after attempting to delete the comment(s).
+        
+        Raises:
+            requests.RequestException: Raised if there is a network error or an invalid response from the server.
+        
+        Tags:
+            delete, comments, management, important
         """
         url = f"{self.base_url}/comments"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -281,13 +337,19 @@ class YoutubeApp(APIApplication):
 
     def add_comments_mark_as_spam(self, id=None) -> Any:
         """
-        Marks a comment as spam by sending a POST request to the specified API endpoint.
-
+        Marks a comment as spam by sending a POST request to the API endpoint.
+        
         Args:
-            id: Optional; the unique identifier of the comment to be marked as spam. If not provided, no specific comment ID is included in the request parameters.
-
+            id: Optional unique identifier of the comment to mark as spam (included in request parameters when provided).
+        
         Returns:
-            The JSON response from the API containing the result of the mark-as-spam operation.
+            JSON response from the API containing the operation result.
+        
+        Raises:
+            HTTPError: If the POST request fails or returns a non-200 status code.
+        
+        Tags:
+            comments, spam, post-request, api, moderation, important
         """
         url = f"{self.base_url}/comments/markAsSpam"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -299,15 +361,21 @@ class YoutubeApp(APIApplication):
         self, banAuthor=None, id=None, moderationStatus=None
     ) -> Any:
         """
-        Sets the moderation status for a comment and optionally bans the author.
-
+        Sets the moderation status for a comment and optionally bans the author through a POST request to a defined endpoint.
+        
         Args:
-            banAuthor: Optional; a boolean indicating whether to ban the author of the comment.
-            id: Optional; a string representing the unique identifier of the comment to be moderated.
-            moderationStatus: Optional; a string specifying the desired moderation status for the comment, such as 'approved', 'rejected', etc.
-
+            banAuthor: Optional boolean indicating whether to ban the comment's author
+            id: Optional string representing the unique identifier of the comment to moderate
+            moderationStatus: Optional string specifying the new moderation status (e.g., 'approved', 'rejected')
+        
         Returns:
-            A JSON object containing the response from the server after attempting to set the moderation status for the specified comment.
+            JSON response from the server containing the result of the moderation operation
+        
+        Raises:
+            requests.HTTPError: Raised when the HTTP request fails (e.g., invalid parameters or server errors)
+        
+        Tags:
+            moderation, comments, management, api-client, important, status-update, ban-author
         """
         url = f"{self.base_url}/comments/setModerationStatus"
         query_params = {
@@ -327,15 +395,21 @@ class YoutubeApp(APIApplication):
         self, id=None, onBehalfOfContentOwner=None, onBehalfOfContentOwnerChannel=None
     ) -> Any:
         """
-        Deletes live broadcasts from a platform using specified query parameters.
-
+        Deletes specified live broadcasts using query parameters to filter requests.
+        
         Args:
-            id: Optional; The unique identifier for the live broadcast to delete.
-            onBehalfOfContentOwner: Optional; The content owner on whose behalf the API request is being made.
-            onBehalfOfContentOwnerChannel: Optional; The channel ID associated with the content owner.
-
+            id: Optional; Unique identifier of the live broadcast to delete (str).
+            onBehalfOfContentOwner: Optional; Content owner acting on behalf of (str).
+            onBehalfOfContentOwnerChannel: Optional; Channel ID linked to content owner (str).
+        
         Returns:
-            A JSON object containing the server's response to the delete request.
+            Dict[str, Any] containing the JSON-parsed response from the API request.
+        
+        Raises:
+            requests.HTTPError: Raised for any HTTP request failures or invalid status codes (4XX/5XX).
+        
+        Tags:
+            delete, live-broadcast, management, api, important
         """
         url = f"{self.base_url}/liveBroadcasts"
         query_params = {
@@ -360,17 +434,23 @@ class YoutubeApp(APIApplication):
         streamId=None,
     ) -> Any:
         """
-        Binds a live broadcast to a stream on YouTube, using specified parameters to authenticate and identify the broadcast and stream.
-
+        Binds a live broadcast to a stream on YouTube, using specified parameters for authentication and identification.
+        
         Args:
-            id: Optional; str. The id of the live broadcast to bind.
-            onBehalfOfContentOwner: Optional; str. The YouTube CMS content owner on behalf of whom the operation is performed.
-            onBehalfOfContentOwnerChannel: Optional; str. The YouTube channel ID for which the live broadcast is operated, on behalf of a content owner.
-            part: Optional; str. The part parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include.
-            streamId: Optional; str. The id of the stream to which the live broadcast is to be bound.
-
+            id: The id of the live broadcast to bind.
+            onBehalfOfContentOwner: The YouTube CMS content owner on behalf of whom the operation is performed.
+            onBehalfOfContentOwnerChannel: The YouTube channel ID for which the live broadcast is operated.
+            part: A comma-separated list of liveBroadcast resource properties to include in the API response.
+            streamId: The id of the stream to which the live broadcast is to be bound.
+        
         Returns:
             The JSON response object from the YouTube API after attempting to bind the live broadcast to the stream.
+        
+        Raises:
+            HTTPError: Raised if the request to the YouTube API fails, typically due to server errors or invalid responses.
+        
+        Tags:
+            bind, youtube-api, live-broadcast, stream, important
         """
         url = f"{self.base_url}/liveBroadcasts/bind"
         query_params = {
@@ -400,7 +480,7 @@ class YoutubeApp(APIApplication):
     ) -> Any:
         """
         Controls a live broadcast by sending a POST request with specified parameters.
-
+        
         Args:
             displaySlate: Optional; Specifies whether or not to show a slate during the broadcast.
             id: Optional; The ID of the live broadcast to control.
@@ -409,9 +489,15 @@ class YoutubeApp(APIApplication):
             onBehalfOfContentOwnerChannel: Optional; The channel owned by the content owner.
             part: Optional; Specifies a comma-separated list of one or more broadcasts resource properties.
             walltime: Optional; An RFC 3339 timestamp that represents the time at which the action takes place.
-
+        
         Returns:
             The JSON response from the server after controlling the live broadcast.
+        
+        Raises:
+            requests.HTTPError: Raised if the HTTP request returns an unsuccessful status code.
+        
+        Tags:
+            control, live-broadcast, async_job, management, important
         """
         url = f"{self.base_url}/liveBroadcasts/control"
         query_params = {
@@ -440,17 +526,23 @@ class YoutubeApp(APIApplication):
         part=None,
     ) -> Any:
         """
-        Transitions a live broadcast to a specified status for a given broadcast ID.
-
+        Transitions a live broadcast to a specified status for a given broadcast ID via API.
+        
         Args:
             broadcastStatus: Optional; The status to which the live broadcast should be transitioned.
             id: Optional; The unique identifier of the broadcast that needs to be transitioned.
             onBehalfOfContentOwner: Optional; The YouTube content owner on whose behalf the API request is being made.
             onBehalfOfContentOwnerChannel: Optional; The YouTube channel ID of the channel associated with the specified content owner.
             part: Optional; A comma-separated list of one or more liveBroadcast resource properties that the API response will include.
-
+        
         Returns:
             The JSON response from the API containing the details of the transitioned live broadcast.
+        
+        Raises:
+            requests.HTTPError: Raised when the HTTP request to the API fails due to a server error or invalid request.
+        
+        Tags:
+            transition, live-broadcast, youtube-api, video-management, important
         """
         url = f"{self.base_url}/liveBroadcasts/transition"
         query_params = {
@@ -470,13 +562,19 @@ class YoutubeApp(APIApplication):
 
     def delete_live_chat_bans(self, id=None) -> Any:
         """
-        Deletes a live chat ban identified by the given ID from the server.
-
+        Deletes a live chat ban identified by the specified ID from the server.
+        
         Args:
-            id: Optional; The unique identifier of the live chat ban to be deleted. If None, no specific ban is targeted.
-
+            id: Optional; The unique identifier of the live chat ban to delete. If None, no specific ban is targeted.
+        
         Returns:
-            The JSON response from the server after the delete operation, which may include details of the deletion.
+            The JSON response from the server after deletion, typically containing operation details.
+        
+        Raises:
+            requests.HTTPError: Raised if the HTTP request fails, indicating server-side issues or invalid parameters.
+        
+        Tags:
+            delete, management, live-chat, async-job, important
         """
         url = f"{self.base_url}/liveChat/bans"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -487,12 +585,18 @@ class YoutubeApp(APIApplication):
     def delete_live_chat_messages(self, id=None) -> Any:
         """
         Deletes live chat messages based on the specified message ID.
-
+        
         Args:
             id: Optional; The identifier of the specific live chat message to be deleted. If not provided, it defaults to None.
-
+        
         Returns:
             A JSON object containing the server's response to the deletion request. It includes details about the operation's success or failure.
+        
+        Raises:
+            HTTPError: Raised if the HTTP request to delete the message fails.
+        
+        Tags:
+            delete, live-chat, message-management, important
         """
         url = f"{self.base_url}/liveChat/messages"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -502,13 +606,19 @@ class YoutubeApp(APIApplication):
 
     def delete_live_chat_moderators(self, id=None) -> Any:
         """
-        Deletes a live chat moderator by ID.
-
+        Deletes a live chat moderator by ID using the specified endpoint.
+        
         Args:
-            id: The ID of the live chat moderator to delete. If None, no moderator is deleted.
-
+            id: The ID of the live chat moderator to delete. When None, no deletion occurs (moderator IDs must be explicitly specified).
+        
         Returns:
-            The JSON response from the server after attempting to delete the moderator.
+            Parsed JSON response from the server containing deletion confirmation or error details.
+        
+        Raises:
+            requests.HTTPError: Raised for unsuccessful HTTP responses (e.g., invalid ID, authorization failure, or server errors).
+        
+        Tags:
+            delete, moderators, management, live-chat, async_job, ids, important
         """
         url = f"{self.base_url}/liveChat/moderators"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -518,14 +628,20 @@ class YoutubeApp(APIApplication):
 
     def delete_videos(self, id=None, onBehalfOfContentOwner=None) -> Any:
         """
-        Deletes videos based on specified criteria from a video platform.
-
+        Deletes specified videos from a video platform using API endpoints.
+        
         Args:
-            id: Optional; A string representing the unique identifier of the video to be deleted. If not provided, no video ID will be specified for deletion.
-            onBehalfOfContentOwner: Optional; A string representing the content owner on whose behalf the operation is being performed. If omitted, the operation is performed on behalf of the authenticated user.
-
+            id: (str, optional): Unique identifier of the video to delete. If omitted, no video ID is specified.
+            onBehalfOfContentOwner: (str, optional): Content owner on whose behalf the operation is performed. Defaults to authenticated user.
+        
         Returns:
-            Returns a JSON object containing the response from the API after attempting to delete the video(s), including any relevant status or error information.
+            (Any): Parsed JSON response from the API including deletion status/errors.
+        
+        Raises:
+            requests.HTTPError: Raised when the API request fails (e.g., invalid video ID, insufficient permissions).
+        
+        Tags:
+            delete, video-management, api, async_job, important
         """
         url = f"{self.base_url}/videos"
         query_params = {
@@ -539,14 +655,20 @@ class YoutubeApp(APIApplication):
 
     def get_videos_get_rating(self, id=None, onBehalfOfContentOwner=None) -> Any:
         """
-        Retrieves the rating of a video using video ID and optional content owner specification.
-
+        Retrieves the rating of a video using its ID and optional content owner specification.
+        
         Args:
             id: Optional; The ID of the video for which the rating is to be retrieved. If None, no specific video ID is used in the request.
-            onBehalfOfContentOwner: Optional; Identifies the content owner for whom the request is being made. Used for API requests made on behalf of a content owner.
-
+            onBehalfOfContentOwner: Optional; Identifies the content owner for whom the request is being made.
+        
         Returns:
             A JSON object containing the video rating information returned by the API.
+        
+        Raises:
+            HTTPError: Raised if the HTTP request returns an unsuccessful status code.
+        
+        Tags:
+            check, video-management, important
         """
         url = f"{self.base_url}/videos/getRating"
         query_params = {
@@ -560,14 +682,20 @@ class YoutubeApp(APIApplication):
 
     def add_videos_rate(self, id=None, rating=None) -> Any:
         """
-        Submit a rating for a video on the server using the provided video ID and rating value.
-
+        Submits a rating for a video on the server using the provided video ID and rating value.
+        
         Args:
             id: Optional; The unique identifier of the video to rate. If None, the video ID is not included in the request.
             rating: Optional; The rating value to assign to the video. If None, the rating is not included in the request.
-
+        
         Returns:
             The JSON response from the server after submitting the rating.
+        
+        Raises:
+            HTTPError: Raised when the server returns an HTTP error status.
+        
+        Tags:
+            rate, video-management, importance
         """
         url = f"{self.base_url}/videos/rate"
         query_params = {
@@ -579,14 +707,19 @@ class YoutubeApp(APIApplication):
 
     def add_videos_report_abuse(self, onBehalfOfContentOwner=None) -> Any:
         """
-        Sends a report to YouTube indicating a video's potential abuse.
-
+        Sends an abuse report for videos via the YouTube API, typically used to flag inappropriate content.
+        
         Args:
-            self: The instance of the class containing this method.
-            onBehalfOfContentOwner: Optional; The YouTube content owner on whose behalf the abuse report is being sent.
-
+            onBehalfOfContentOwner: Optional; YouTube content owner ID acting as the reporting entity (for partner accounts).
+        
         Returns:
-            The JSON response from the YouTube API after reporting the abuse.
+            Dict containing the JSON response from the YouTube API after reporting abuse.
+        
+        Raises:
+            HTTPError: Raised when the YouTube API request fails, typically due to authentication errors or invalid parameters.
+        
+        Tags:
+            report, abuse, video, content, api, important
         """
         url = f"{self.base_url}/videos/reportAbuse"
         query_params = {
@@ -601,13 +734,19 @@ class YoutubeApp(APIApplication):
     def add_watermarks_set(self, channelId=None, onBehalfOfContentOwner=None) -> Any:
         """
         Sets watermarks on a specified YouTube channel using optional content owner credentials.
-
+        
         Args:
             channelId: Optional; The ID of the YouTube channel on which to set the watermark.
-            onBehalfOfContentOwner: Optional; The content owner's ID that the request is made on behalf of, allowing authenticated channel actions.
-
+            onBehalfOfContentOwner: Optional; The content owner's ID that the request is made on behalf of.
+        
         Returns:
             The JSON response from the API call, which includes details about the watermark setting operation.
+        
+        Raises:
+            requests.RequestException: Raised if there is an error with the API request, such as connection issues or invalid response status.
+        
+        Tags:
+            watermark, youtube, management, channel-config, important
         """
         url = f"{self.base_url}/watermarks/set"
         query_params = {
@@ -625,13 +764,19 @@ class YoutubeApp(APIApplication):
     def add_watermarks_unset(self, channelId=None, onBehalfOfContentOwner=None) -> Any:
         """
         Removes watermarks from a YouTube channel specified by channel ID.
-
+        
         Args:
             channelId: Optional; The unique identifier of the YouTube channel from which to remove watermarks.
             onBehalfOfContentOwner: Optional; The content owner that the request is on behalf of, used by YouTube content partners.
-
+        
         Returns:
             The JSON response from the YouTube API after attempting to remove the watermarks.
+        
+        Raises:
+            HTTPError: Raised when there is an error in the HTTP request or if the server returns a status code indicating a client or server error.
+        
+        Tags:
+            remove, watermark, youtube, important
         """
         url = f"{self.base_url}/watermarks/unset"
         query_params = {
@@ -659,21 +804,27 @@ class YoutubeApp(APIApplication):
         regionCode=None,
     ) -> Any:
         """
-        Get YouTube channel activities.
-
+        Retrieve YouTube channel activities based on specified filters and parameters.
+        
         Args:
-            channelId: Channel ID
-            home: User's feed
-            maxResults: Results limit
-            mine: User's activities
-            pageToken: Page token
-            part: Response parts
-            publishedAfter: After date
-            publishedBefore: Before date
-            regionCode: Region code
-
+            channelId: The YouTube channel ID to fetch activities from. If None, fetches from multiple sources (depending on other parameters).
+            home: If True, retrieves activities from the user's personalized YouTube home feed. Requires authentication if mine is not specified.
+            maxResults: Maximum number of items to return in the response list (1-50, default server-side limit).
+            mine: If True, retrieves activities from the authenticated user's channel. Requires authentication.
+            pageToken: Token to fetch a specific page of results, used for pagination.
+            part: Comma-separated list of resource parts to include in the response (e.g., 'snippet,contentDetails').
+            publishedAfter: Filter activities published after this datetime (ISO 8601 format).
+            publishedBefore: Filter activities published before this datetime (ISO 8601 format).
+            regionCode: Return activities viewable in the specified two-letter ISO country code.
+        
         Returns:
-            JSON with activities
+            Dictionary containing parsed JSON response with activity data.
+        
+        Raises:
+            requests.HTTPError: Raised when the API request fails due to invalid parameters, authentication issues, or server errors.
+        
+        Tags:
+            retrieve, activities, youtube, api-client, pagination, filter, async, important
         """
         url = f"{self.base_url}/activities"
         query_params = {
@@ -699,14 +850,20 @@ class YoutubeApp(APIApplication):
         self, channelId=None, onBehalfOfContentOwner=None
     ) -> Any:
         """
-        Inserts a new channel banner for a specified YouTube channel using YouTube Data API.
-
+        Inserts a new channel banner for a YouTube channel using the YouTube Data API.
+        
         Args:
-            channelId: Optional; A string representing the unique identifier of the YouTube channel for which the banner is being inserted.
-            onBehalfOfContentOwner: Optional; A string indicating that the request is on behalf of an authenticated content owner and specifies the content owner's external ID.
-
+            channelId: Optional string specifying the unique identifier of the YouTube channel for banner insertion
+            onBehalfOfContentOwner: Optional string indicating the content owner's external ID when acting on their behalf
+        
         Returns:
-            A JSON object containing the response from the YouTube Data API with details about the newly inserted channel banner.
+            JSON object containing the API response with details of the newly inserted channel banner
+        
+        Raises:
+            HTTPError: Raised when the YouTube Data API request fails (4XX or 5XX status code)
+        
+        Tags:
+            insert, channel, banner, youtube-api, management, async_job, important
         """
         url = f"{self.base_url}/channelBanners/insert"
         query_params = {
@@ -723,14 +880,20 @@ class YoutubeApp(APIApplication):
 
     def delete_channel_sections(self, id=None, onBehalfOfContentOwner=None) -> Any:
         """
-        Deletes channel sections from a platform specified by the base URL.
-
+        Deletes one or more channel sections from the specified platform using the provided identifiers.
+        
         Args:
-            id: Optional; A string representing the unique identifier of the channel section to be deleted.
-            onBehalfOfContentOwner: Optional; A string indicating that the request is being made on behalf of the content owner specified by this parameter.
-
+            id: Optional string representing the unique identifier of the target channel section. If omitted, no specific deletion occurs (behavior depends on API implementation).
+            onBehalfOfContentOwner: Optional string indicating the content owner on whose behalf the request is made.
+        
         Returns:
-            Returns a JSON-decoded response object from the server after attempting to delete the specified channel section.
+            JSON-decoded response payload from the API server after deletion attempt.
+        
+        Raises:
+            requests.HTTPError: Raised for HTTP 4xx/5xx responses from the server during the deletion request.
+        
+        Tags:
+            delete, channel-section, management, important
         """
         url = f"{self.base_url}/channelSections"
         query_params = {
@@ -757,23 +920,29 @@ class YoutubeApp(APIApplication):
         part=None,
     ) -> Any:
         """
-        Get YouTube channels.
-
+        Retrieves YouTube channels based on specified parameters.
+        
         Args:
-            categoryId: Category ID
-            forUsername: Username
-            hl: Language code
-            id: Channel IDs
-            managedByMe: Managed channels
-            maxResults: Results limit
-            mine: Own channels
-            mySubscribers: Subscribed channels
-            onBehalfOfContentOwner: Owner ID
-            pageToken: Page token
-            part: Response parts
-
+            categoryId: Category ID to filter channels.
+            forUsername: Username to retrieve channels for.
+            hl: Language code for localized output.
+            id: List of channel IDs to retrieve.
+            managedByMe: Flag to retrieve channels managed by the current user.
+            maxResults: Maximum number of results to return.
+            mine: Flag to retrieve channels owned by the current user.
+            mySubscribers: Flag to retrieve channels subscribed by the current user.
+            onBehalfOfContentOwner: Content owner ID to retrieve channels on behalf of.
+            pageToken: Token for pagination.
+            part: Specified parts of the channel resource to include in the response.
+        
         Returns:
-            JSON with channels
+            JSON response containing the requested channels.
+        
+        Raises:
+            ResponseError: Raised if there is an error in the HTTP response.
+        
+        Tags:
+            search, youtube, channels, management, important
         """
         url = f"{self.base_url}/channels"
         query_params = {
@@ -812,23 +981,29 @@ class YoutubeApp(APIApplication):
         videoId=None,
     ) -> Any:
         """
-        Get YouTube comment threads.
-
+        Retrieve YouTube comment threads based on specified filters and pagination parameters.
+        
         Args:
-            allThreadsRelatedToChannelId: Threads for channel
-            channelId: Channel ID
-            id: Comment thread IDs
-            maxResults: Results limit
-            moderationStatus: Moderation status
-            order: Sort order
-            pageToken: Pagination token
-            part: Response parts
-            searchTerms: Search terms
-            textFormat: Text format
-            videoId: Video ID
-
+            allThreadsRelatedToChannelId: Returns all threads associated with the specified channel, including replies
+            channelId: Channel ID to filter comment threads
+            id: Specific comment thread ID(s) to retrieve
+            maxResults: Maximum number of items to return (1-100)
+            moderationStatus: Filter by moderation status (e.g., 'heldForReview')
+            order: Sort order for results (e.g., 'time', 'relevance')
+            pageToken: Pagination token for retrieving specific result pages
+            part: Comma-separated list of resource properties to include
+            searchTerms: Text search query to filter comments
+            textFormat: Formatting for comment text (e.g., 'html', 'plainText')
+            videoId: Video ID to filter associated comment threads
+        
         Returns:
-            JSON with comment threads
+            JSON response containing comment thread data and pagination information
+        
+        Raises:
+            HTTPError: Raised for unsuccessful API requests (4xx/5xx status codes)
+        
+        Tags:
+            retrieve, comments, pagination, youtube-api, rest, data-fetch, important
         """
         url = f"{self.base_url}/commentThreads"
         query_params = {
@@ -857,15 +1032,21 @@ class YoutubeApp(APIApplication):
     ) -> Any:
         """
         Retrieves fan funding events based on specified filter criteria.
-
+        
         Args:
-            hl: Optional; a string representing the language for text values. If not specified, the default language will be used.
-            maxResults: Optional; an integer specifying the maximum number of results to return. If not specified, a server-determined default will be used.
-            pageToken: Optional; a string token to retrieve a specific page in a paginated set of results. Useful for navigating through large sets of data.
+            hl: Optional; a string representing the language for text values.
+            maxResults: Optional; an integer specifying the maximum number of results to return.
+            pageToken: Optional; a string token to retrieve a specific page in a paginated set of results.
             part: Optional; a comma-separated list of one or more 'fanFundingEvent' resource properties that the API response will include.
-
+        
         Returns:
-            The function returns the JSON-decoded response of the fan funding events data retrieved from the API.
+            A JSON-decoded response of the fan funding events data retrieved from the API.
+        
+        Raises:
+            HTTPError: Raised if the API request returns a status code that indicates an error.
+        
+        Tags:
+            retrieve, events, fanfunding
         """
         url = f"{self.base_url}/fanFundingEvents"
         query_params = {
@@ -885,15 +1066,21 @@ class YoutubeApp(APIApplication):
     def get_guecategories(self, hl=None, id=None, part=None, regionCode=None) -> Any:
         """
         Fetches guide categories from a remote service based on specified parameters.
-
+        
         Args:
             hl: Optional; a string that specifies the language localization.
             id: Optional; a string representing the ID of the guide category.
             part: Optional; a string indicating which parts of the guide category resource to return.
             regionCode: Optional; a string that denotes the region of interest.
-
+        
         Returns:
             A dictionary containing the JSON response representing guide categories from the service.
+        
+        Raises:
+            requests.exceptions.HTTPError: Raised if the HTTP request returns an unsuccessful status code.
+        
+        Tags:
+            get, fetch, guide-categories, api-call, important
         """
         url = f"{self.base_url}/guideCategories"
         query_params = {
@@ -912,14 +1099,20 @@ class YoutubeApp(APIApplication):
 
     def get_languages(self, hl=None, part=None) -> Any:
         """
-        Fetches a list of supported languages from the internationalization API.
-
+        Fetches a list of supported languages from the internationalization API, returning localized names when specified.
+        
         Args:
-            hl: Optional; The language code to localize the language names, e.g., 'en' for English.
-            part: Optional; The part parameter specifies a comma-separated list of one or more i18nLanguage resource properties that the API response will include.
-
+            hl: Optional language code to localize returned language names (e.g., 'en' for English).
+            part: Optional comma-separated list of i18nLanguage resource properties to include in response.
+        
         Returns:
-            A JSON object containing the API response with the list of supported languages.
+            JSON object containing API response with supported languages data.
+        
+        Raises:
+            HTTPError: Raised for unsuccessful API requests (4XX/5XX status codes).
+        
+        Tags:
+            fetch, i18n, languages, api-client, important
         """
         url = f"{self.base_url}/i18nLanguages"
         query_params = {k: v for k, v in [("hl", hl), ("part", part)] if v is not None}
@@ -929,14 +1122,20 @@ class YoutubeApp(APIApplication):
 
     def get_regions(self, hl=None, part=None) -> Any:
         """
-        Retrieves a list of i18n regions from a specified API endpoint.
-
+        Retrieves a list of i18n regions from an API endpoint.
+        
         Args:
-            hl: Optional; a string representing the language code for which the regions are requested.
-            part: Optional; a string specifying a comma-separated list of one or more i18nRegion resource parts to include in the API response.
-
+            hl: Optional string representing language code for regional localization.
+            part: Optional comma-separated string specifying i18nRegion resource parts to include.
+        
         Returns:
-            The JSON response from the API containing the list of i18n regions.
+            JSON response containing i18n regions data.
+        
+        Raises:
+            HTTPError: If the API request fails with a 4XX/5XX status code.
+        
+        Tags:
+            list, regions, i18n, api, important
         """
         url = f"{self.base_url}/i18nRegions"
         query_params = {k: v for k, v in [("hl", hl), ("part", part)] if v is not None}
@@ -948,15 +1147,21 @@ class YoutubeApp(APIApplication):
         self, id=None, onBehalfOfContentOwner=None, onBehalfOfContentOwnerChannel=None
     ) -> Any:
         """
-        Deletes a livestream resource from the YouTube Data API using optional filtering parameters.
-
+        Deletes a YouTube livestream resource using the YouTube Data API with optional filtering parameters.
+        
         Args:
-            id: Optional; A comma-separated list of YouTube livestream IDs that identify the resources to be deleted.
-            onBehalfOfContentOwner: Optional; YouTube content owner who is channel owner of the livestream and makes this API call.
-            onBehalfOfContentOwnerChannel: Optional; The YouTube channel ID on behalf of which the API call is being made.
-
+            id: Optional; A comma-separated list of YouTube livestream IDs to be deleted.
+            onBehalfOfContentOwner: Optional; The YouTube content owner who is the channel owner of the livestream and makes this API call.
+            onBehalfOfContentOwnerChannel: Optional; The YouTube channel ID on behalf of which the API call is made.
+        
         Returns:
             A JSON object containing the API's response to the delete request.
+        
+        Raises:
+            requests.HTTPError: Raised when the HTTP request returns an unsuccessful status code.
+        
+        Tags:
+            delete, livestream, youtube, api, important
         """
         url = f"{self.base_url}/liveStreams"
         query_params = {
@@ -974,14 +1179,20 @@ class YoutubeApp(APIApplication):
 
     def delete_play_list_items(self, id=None, onBehalfOfContentOwner=None) -> Any:
         """
-        Deletes playlist items identified by the given id or on behalf of the specified content owner.
-
+        Deletes playlist items identified by the given ID or on behalf of the specified content owner.
+        
         Args:
             id: Optional; The ID of the playlist item to be deleted.
             onBehalfOfContentOwner: Optional; The content owner on whose behalf the playlist item is being deleted.
-
+        
         Returns:
-            The JSON response from the server indicating the result of the deletion operation.
+            JSON response from the server indicating the result of the deletion operation.
+        
+        Raises:
+            HTTPError: Raised if the API request fails due to invalid parameters, authorization issues, or server errors.
+        
+        Tags:
+            delete, playlist-items, management, important
         """
         url = f"{self.base_url}/playlistItems"
         query_params = {
@@ -995,14 +1206,20 @@ class YoutubeApp(APIApplication):
 
     def delete_playlists(self, id=None, onBehalfOfContentOwner=None) -> Any:
         """
-        Deletes playlists based on specified criteria.
-
+        Deletes playlists via the YouTube Data API based on specified criteria.
+        
         Args:
-            id: Optional; A string representing the ID of the playlist to delete. Default is None.
-            onBehalfOfContentOwner: Optional; A string representing the content owner in whose behalf the operation is being performed. Default is None.
-
+            id: Optional; A string representing the ID of the playlist to delete. If None, operation details depend on API implementation (not recommended without explicit identifier).
+            onBehalfOfContentOwner: Optional; A string representing the content owner on whose behalf the operation is performed. Used for delegated access.
+        
         Returns:
-            The JSON response from the server as a result of the delete operation.
+            Dictionary containing the JSON response from the YouTube API after playlist deletion.
+        
+        Raises:
+            HTTPError: Raised when the API request fails, typically due to invalid permissions, non-existent playlist, or network issues.
+        
+        Tags:
+            delete, playlists, youtube-api, management, important
         """
         url = f"{self.base_url}/playlists"
         query_params = {
@@ -1049,43 +1266,49 @@ class YoutubeApp(APIApplication):
         videoType=None,
     ) -> Any:
         """
-        Search YouTube Data API with filters.
-
+        Submits a search query to the YouTube Data API with optional filters.
+        
         Args:
-            channelId: Channel filter
-            channelType: Channel type
-            eventType: Event type
-            forContentOwner: Content owner search
-            forDeveloper: Developer search
-            forMine: User's videos
-            location: Location filter
-            locationRadius: Location radius
-            maxResults: Results limit
-            onBehalfOfContentOwner: Owner ID
-            order: Results order
-            pageToken: Page token
-            part: Response parts
-            publishedAfter: After date
-            publishedBefore: Before date
-            q: Search query
-            regionCode: Region code
-            relatedToVideoId: Related videos
-            relevanceLanguage: Language
-            safeSearch: Safe search
-            topicId: Topic filter
-            type: Resource type
-            videoCaption: Caption filter
-            videoCategoryId: Category
-            videoDefinition: Definition
-            videoDimension: Dimension
-            videoDuration: Duration
-            videoEmbeddable: Embeddable
-            videoLicense: License
-            videoSyndicated: Syndicated
-            videoType: Video type
-
+            channelId: Channel filter for the search.
+            channelType: Type of channel to filter by.
+            eventType: Type of event to filter by.
+            forContentOwner: Whether to search for content owned by the specified content owner.
+            forDeveloper: Whether to search for content owned by the developer.
+            forMine: Whether to search for the user's videos.
+            location: Geographic location to filter results by.
+            locationRadius: Radius of the geographic location.
+            maxResults: Maximum number of search results to return.
+            onBehalfOfContentOwner: Owner ID when acting on behalf of a content owner.
+            order: Order in which search results are returned.
+            pageToken: Page token for pagination.
+            part: Response parts to return.
+            publishedAfter: After date to filter by.
+            publishedBefore: Before date to filter by.
+            q: Search query string.
+            regionCode: Region code to filter by.
+            relatedToVideoId: Search related videos to the specified ID.
+            relevanceLanguage: Language used for relevance.
+            safeSearch: Safe search settings.
+            topicId: Topic filter.
+            type: Type of resource to return.
+            videoCaption: Caption filter for videos.
+            videoCategoryId: Category of videos.
+            videoDefinition: Video definition filter (e.g., 'hd').
+            videoDimension: Dimension filter (e.g., '2d', '3d').
+            videoDuration: Duration filter for videos.
+            videoEmbeddable: Whether videos are embeddable.
+            videoLicense: License filter for videos.
+            videoSyndicated: Whether videos are syndicated.
+            videoType: Type of video (e.g., 'movie', 'episode')
+        
         Returns:
-            JSON with search results
+            JSON response containing the search results.
+        
+        Raises:
+            HTTPError: If the request to the YouTube Data API fails.
+        
+        Tags:
+            search, youtube-api, video-search, web-api, important
         """
         url = f"{self.base_url}/search"
         query_params = {
@@ -1133,16 +1356,22 @@ class YoutubeApp(APIApplication):
         self, filter=None, maxResults=None, pageToken=None, part=None
     ) -> Any:
         """
-        Fetches a list of sponsors from a server, applying optional filtering and pagination.
-
+        Fetches a list of sponsors from a server with optional filtering and pagination.
+        
         Args:
-            filter: Optional; A string containing filtering criteria for the sponsors.
-            maxResults: Optional; An integer limiting the number of sponsors returned.
-            pageToken: Optional; A token string used to retrieve a specific page of results.
-            part: Optional; A string specifying which parts of the sponsor details to fetch.
-
+            filter: Optional string containing filtering criteria for sponsors.
+            maxResults: Optional integer limiting the number of returned sponsors.
+            pageToken: Optional token string for paginating to a specific result page.
+            part: Optional string specifying which sponsor detail parts to include.
+        
         Returns:
-            The JSON response containing the list of sponsors, potentially filtered and paginated, as returned by the server.
+            JSON response containing the list of sponsors (filtered/paginated) as returned by the server.
+        
+        Raises:
+            requests.HTTPError: If the HTTP request fails or returns a non-200 status code.
+        
+        Tags:
+            fetch, list, pagination, filter, sponsors, api, important
         """
         url = f"{self.base_url}/sponsors"
         query_params = {
@@ -1161,13 +1390,19 @@ class YoutubeApp(APIApplication):
 
     def delete_subscriptions(self, id=None) -> Any:
         """
-        Deletes subscriptions by sending a DELETE request to the API.
-
+        Deletes one or all subscriptions by sending a DELETE request to the API endpoint.
+        
         Args:
-            id: Optional; An identifier for a specific subscription to delete. If None, deletes all subscriptions.
-
+            id: Optional identifier for a specific subscription to delete (str, int, or None). If None, deletes all subscriptions.
+        
         Returns:
-            The JSON response from the API after attempting to delete the subscription(s).
+            JSON-formatted response from the API containing deletion results.
+        
+        Raises:
+            HTTPError: Raised for HTTP request failures (4XX/5XX status codes) during the deletion attempt.
+        
+        Tags:
+            delete, subscriptions, async-job, management, important
         """
         url = f"{self.base_url}/subscriptions"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -1180,15 +1415,21 @@ class YoutubeApp(APIApplication):
     ) -> Any:
         """
         Fetches a list of super chat events from the YouTube API with optional filtering parameters.
-
+        
         Args:
             hl: Optional; the language code to select localized resource information.
             maxResults: Optional; the maximum number of items that should be returned in the result set.
             pageToken: Optional; the token to identify a specific page in the result set.
             part: Optional; the parameter specifying which super chat event resource parts to include in the response.
-
+        
         Returns:
             A JSON object containing the super chat events data returned by the YouTube API.
+        
+        Raises:
+            RequestException: Raised if there is an issue with the HTTP request, such as network or server errors.
+        
+        Tags:
+            fetch, youtube-api, async-job, important
         """
         url = f"{self.base_url}/superChatEvents"
         query_params = {
@@ -1208,13 +1449,19 @@ class YoutubeApp(APIApplication):
     def add_thumbnails_set(self, onBehalfOfContentOwner=None, videoId=None) -> Any:
         """
         Sets a thumbnail for a specified video on behalf of a content owner using the YouTube API.
-
+        
         Args:
             onBehalfOfContentOwner: Optional; str. The YouTube content owner ID on whose behalf the request is being made.
             videoId: Optional; str. The ID of the video for which the thumbnails are being set.
-
+        
         Returns:
             dict. The response from the YouTube API as a JSON object, containing details of the updated video thumbnail.
+        
+        Raises:
+            HTTPError: Raised if the HTTP request returns an unsuccessful status code.
+        
+        Tags:
+            thumbnail, youtube-api, video-management, async-job, important
         """
         url = f"{self.base_url}/thumbnails/set"
         query_params = {
@@ -1231,14 +1478,20 @@ class YoutubeApp(APIApplication):
 
     def get_video_abuse_report_reasons(self, hl=None, part=None) -> Any:
         """
-        Fetches a list of video abuse report reasons with optional localization and response filtering.
-
+        Fetches video abuse report reasons with optional localization and response filtering.
+        
         Args:
-            hl: An optional parameter specifying the language for localizing the response. This is typically a BCP-47 language code, such as 'en' or 'fr'.
-            part: An optional parameter specifying which parts of the abuse report reasons to include in the response. This could specify fields like 'id' or 'snippet'.
-
+            hl: Optional BCP-47 language code for localizing the response (e.g., 'en' or 'fr').
+            part: Optional parameter specifying which parts of the abuse report reasons to include in the response (e.g., 'id' or 'snippet').
+        
         Returns:
-            The function returns a JSON object containing the list of video abuse report reasons, or filtered parts of it, if specified.
+            A JSON object containing the list of video abuse report reasons, or filtered parts if specified.
+        
+        Raises:
+            requests.RequestException: Raised if there is a problem with the HTTP request (e.g., network issues or invalid response).
+        
+        Tags:
+            fetch, management, abuse-report, video-content, important
         """
         url = f"{self.base_url}/videoAbuseReportReasons"
         query_params = {k: v for k, v in [("hl", hl), ("part", part)] if v is not None}
@@ -1248,16 +1501,22 @@ class YoutubeApp(APIApplication):
 
     def get_veocategories(self, hl=None, id=None, part=None, regionCode=None) -> Any:
         """
-        Fetches video categories from an external API using specified query parameters.
-
+        Fetches video categories from an external API using specified query parameters and returns the parsed JSON response.
+        
         Args:
-            hl: Optional; the language code for localized video category names, e.g., 'en'.
-            id: Optional; a comma-separated list of video category IDs to filter the results.
-            part: Optional; a list of properties to include in the response, e.g., 'snippet'.
-            regionCode: Optional; an ISO 3166-1 alpha-2 country code to filter the categories for a specific region.
-
+            hl: Optional; the language code (e.g., 'en') for localized video category names
+            id: Optional; comma-separated list of video category IDs to filter results
+            part: Optional; list of properties (e.g., 'snippet') to include in the response
+            regionCode: Optional; ISO 3166-1 alpha-2 country code to filter region-specific categories
+        
         Returns:
-            The JSON response from the API containing video category information.
+            Dictionary containing parsed JSON response with video category details
+        
+        Raises:
+            requests.HTTPError: Raised when the API request fails with a non-success status code
+        
+        Tags:
+            fetch, video-categories, api-request, json-response, important
         """
         url = f"{self.base_url}/videoCategories"
         query_params = {
@@ -1276,14 +1535,20 @@ class YoutubeApp(APIApplication):
 
     def delete_groupitems(self, id=None, onBehalfOfContentOwner=None) -> Any:
         """
-        Deletes group items based on specified parameters.
-
+        Deletes group items based on the provided parameters.
+        
         Args:
             id: Optional; A string that identifies the group item to be deleted. If not provided, all group items may be affected depending on other parameters.
-            onBehalfOfContentOwner: Optional; A string representing the content owner on whose behalf the request is being made. This is typically used for partners or channels managed by the content owner.
-
+            onBehalfOfContentOwner: Optional; A string representing the content owner on whose behalf the request is being made.
+        
         Returns:
-            A JSON object containing the response from the deletion request, which includes the results of the delete operation.
+            A JSON object containing the response from the deletion request.
+        
+        Raises:
+            HTTPError: Raised if the HTTP request returns an unsuccessful status code.
+        
+        Tags:
+            delete, groupitems, management, important
         """
         url = f"{self.base_url}/groupItems"
         query_params = {
@@ -1297,14 +1562,20 @@ class YoutubeApp(APIApplication):
 
     def delete_groups(self, id=None, onBehalfOfContentOwner=None) -> Any:
         """
-        Deletes groups specified by their ID, optionally on behalf of a content owner.
-
+        Deletes specified groups via API, optionally on behalf of a content owner.
+        
         Args:
-            id: Optional; The unique identifier for the group to be deleted. If not provided, no specific group ID will be targeted.
-            onBehalfOfContentOwner: Optional; The content owner that the group deletion is being performed on behalf of.
-
+            id: Optional unique identifier for the group to delete. If None, no specific group targeted.
+            onBehalfOfContentOwner: Optional content owner ID for delegated authorization.
+        
         Returns:
-            A JSON-decoded response from the server indicating the success or failure of the delete operation.
+            JSON-decoded response indicating operation success/failure.
+        
+        Raises:
+            requests.exceptions.HTTPError: Raised for invalid requests, authentication failures, or server errors during deletion.
+        
+        Tags:
+            delete, management, async_job, api, important
         """
         url = f"{self.base_url}/groups"
         query_params = {
@@ -1330,22 +1601,28 @@ class YoutubeApp(APIApplication):
         start=None,
     ) -> Any:
         """
-        Fetches and returns report data based on specified filtering and sorting criteria.
-
+        Fetches and returns report data based on specified filtering, sorting, and range criteria.
+        
         Args:
-            currency: Optional; Specifies the currency format for the report.
-            dimensions: Optional; List of dimensions to include in the report.
-            end: Optional; End date for the report data range.
-            filters: Optional; Filters to apply to the report data.
-            ids: Optional; Specific identifiers to include in the report.
-            include: Optional; Additional entities to include in the report's output.
-            max: Optional; Maximum number of results to return.
-            metrics: Optional; List of metrics to include in the report.
-            sort: Optional; Order by which to sort the report results.
-            start: Optional; Start date for the report data range.
-
+            currency: Optional; specifies the currency format for monetary values in the report
+            dimensions: Optional; list of dimensions (e.g., 'country', 'device') to include in report breakdowns
+            end: Optional; end date (YYYY-MM-DD format) for the report data range
+            filters: Optional; conditions to filter report rows (e.g., 'country=US,clicks>100')
+            ids: Optional; specific object identifiers (e.g., campaign IDs) to include in the report
+            include: Optional; secondary datasets or entities to include in the report output
+            max: Optional; maximum number of results to return per pagination batch
+            metrics: Optional; list of measurable values to include (e.g., 'clicks', 'conversions')
+            sort: Optional; criteria for sorting results (e.g., '-clicks' for descending order)
+            start: Optional; start date (YYYY-MM-DD format) for the report data range
+        
         Returns:
-            The response containing the report data in JSON format.
+            Report data as parsed JSON from the API response
+        
+        Raises:
+            requests.exceptions.HTTPError: Raised when the API request fails due to invalid parameters, authentication issues, or server errors
+        
+        Tags:
+            fetch, report, api, filter, sort, metrics, management, important
         """
         url = f"{self.base_url}/reports"
         query_params = {
