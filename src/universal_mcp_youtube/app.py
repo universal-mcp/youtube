@@ -48,7 +48,7 @@ class YoutubeApp(APIApplication):
             ValueError: Raised if the required 'jobId' parameter is missing.
         
         Tags:
-            retrieve, report, job-management, important, batch
+            retrieve, report, job-management, batch
         """
         if jobId is None:
             raise ValueError("Missing required parameter 'jobId'")
@@ -88,7 +88,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised if the API request fails (e.g., invalid permissions or resource not found).
         
         Tags:
-            retrieve, report, job, api, json, important
+            retrieve, report, job, api, json
         """
         if jobId is None:
             raise ValueError("Missing required parameter 'jobId'")
@@ -120,7 +120,7 @@ class YoutubeApp(APIApplication):
             requests.exceptions.HTTPError: Raised for failed HTTP requests (e.g., invalid job ID, permission errors).
         
         Tags:
-            delete, jobs, async_job, management, important
+            delete, jobs, async_job, management
         """
         if jobId is None:
             raise ValueError("Missing required parameter 'jobId'")
@@ -157,7 +157,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised if the server returns an unsuccessful status code.
         
         Tags:
-            list, scrape, management, important
+            list, scrape, management
         """
         url = f"{self.base_url}/v1/jobs"
         query_params = {
@@ -189,7 +189,7 @@ class YoutubeApp(APIApplication):
             requests.exceptions.HTTPError: If the HTTP request fails, such as a 404 for a non-existent resource.
         
         Tags:
-            retrieve, media, json, http, get, important
+            retrieve, media, json, http, get
         """
         if resourceName is None:
             raise ValueError("Missing required parameter 'resourceName'")
@@ -222,7 +222,7 @@ class YoutubeApp(APIApplication):
             HTTPError: If the API request fails due to network issues, authentication problems, or invalid parameters.
         
         Tags:
-            retrieve, list, api-resource, filtering, pagination, important, report-management
+            retrieve, list, api-resource, filtering, pagination, report-management
         """
         url = f"{self.base_url}/v1/reportTypes"
         query_params = {
@@ -257,7 +257,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised when the HTTP request fails, such as invalid ID, authentication failures, or API limitations exceeded.
         
         Tags:
-            delete, captions, api, management, important
+            delete, captions, api, management
         """
         url = f"{self.base_url}/captions"
         query_params = {
@@ -294,7 +294,7 @@ class YoutubeApp(APIApplication):
             requests.exceptions.HTTPError: Raised for failed API requests (4XX/5XX status codes)
         
         Tags:
-            retrieve, captions, api-client, async-job, important
+            retrieve, captions, api-client, async-job
         """
         if id is None:
             raise ValueError("Missing required parameter 'id'")
@@ -327,7 +327,7 @@ class YoutubeApp(APIApplication):
             requests.RequestException: Raised if there is a network error or an invalid response from the server.
         
         Tags:
-            delete, comments, management, important
+            delete, comments, management
         """
         url = f"{self.base_url}/comments"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -349,7 +349,7 @@ class YoutubeApp(APIApplication):
             HTTPError: If the POST request fails or returns a non-200 status code.
         
         Tags:
-            comments, spam, post-request, api, moderation, important
+            comments, spam, post-request, api, moderation
         """
         url = f"{self.base_url}/comments/markAsSpam"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -375,7 +375,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised when the HTTP request fails (e.g., invalid parameters or server errors)
         
         Tags:
-            moderation, comments, management, api-client, important, status-update, ban-author
+            moderation, comments, management, api-client, status-update, ban-author
         """
         url = f"{self.base_url}/comments/setModerationStatus"
         query_params = {
@@ -409,7 +409,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised for any HTTP request failures or invalid status codes (4XX/5XX).
         
         Tags:
-            delete, live-broadcast, management, api, important
+            delete, live-broadcast, management, api
         """
         url = f"{self.base_url}/liveBroadcasts"
         query_params = {
@@ -450,7 +450,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised if the request to the YouTube API fails, typically due to server errors or invalid responses.
         
         Tags:
-            bind, youtube-api, live-broadcast, stream, important
+            bind, youtube-api, live-broadcast, stream
         """
         url = f"{self.base_url}/liveBroadcasts/bind"
         query_params = {
@@ -497,7 +497,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised if the HTTP request returns an unsuccessful status code.
         
         Tags:
-            control, live-broadcast, async_job, management, important
+            control, live-broadcast, async_job, management
         """
         url = f"{self.base_url}/liveBroadcasts/control"
         query_params = {
@@ -542,7 +542,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised when the HTTP request to the API fails due to a server error or invalid request.
         
         Tags:
-            transition, live-broadcast, youtube-api, video-management, important
+            transition, live-broadcast, youtube-api, video-management
         """
         url = f"{self.base_url}/liveBroadcasts/transition"
         query_params = {
@@ -574,7 +574,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised if the HTTP request fails, indicating server-side issues or invalid parameters.
         
         Tags:
-            delete, management, live-chat, async-job, important
+            delete, management, live-chat, async-job
         """
         url = f"{self.base_url}/liveChat/bans"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -596,7 +596,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised if the HTTP request to delete the message fails.
         
         Tags:
-            delete, live-chat, message-management, important
+            delete, live-chat, message-management
         """
         url = f"{self.base_url}/liveChat/messages"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -618,7 +618,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised for unsuccessful HTTP responses (e.g., invalid ID, authorization failure, or server errors).
         
         Tags:
-            delete, moderators, management, live-chat, async_job, ids, important
+            delete, moderators, management, live-chat, async_job, ids
         """
         url = f"{self.base_url}/liveChat/moderators"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -641,7 +641,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised when the API request fails (e.g., invalid video ID, insufficient permissions).
         
         Tags:
-            delete, video-management, api, async_job, important
+            delete, video-management, api, async_job
         """
         url = f"{self.base_url}/videos"
         query_params = {
@@ -668,7 +668,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised if the HTTP request returns an unsuccessful status code.
         
         Tags:
-            check, video-management, important
+            check, video-management
         """
         url = f"{self.base_url}/videos/getRating"
         query_params = {
@@ -719,7 +719,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised when the YouTube API request fails, typically due to authentication errors or invalid parameters.
         
         Tags:
-            report, abuse, video, content, api, important
+            report, abuse, video, content, api
         """
         url = f"{self.base_url}/videos/reportAbuse"
         query_params = {
@@ -746,7 +746,7 @@ class YoutubeApp(APIApplication):
             requests.RequestException: Raised if there is an error with the API request, such as connection issues or invalid response status.
         
         Tags:
-            watermark, youtube, management, channel-config, important
+            watermark, youtube, management, channel-config
         """
         url = f"{self.base_url}/watermarks/set"
         query_params = {
@@ -776,7 +776,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised when there is an error in the HTTP request or if the server returns a status code indicating a client or server error.
         
         Tags:
-            remove, watermark, youtube, important
+            remove, watermark, youtube
         """
         url = f"{self.base_url}/watermarks/unset"
         query_params = {
@@ -824,7 +824,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised when the API request fails due to invalid parameters, authentication issues, or server errors.
         
         Tags:
-            retrieve, activities, youtube, api-client, pagination, filter, async, important
+            retrieve, activities, youtube, api-client, pagination, filter, async
         """
         url = f"{self.base_url}/activities"
         query_params = {
@@ -863,7 +863,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised when the YouTube Data API request fails (4XX or 5XX status code)
         
         Tags:
-            insert, channel, banner, youtube-api, management, async_job, important
+            insert, channel, banner, youtube-api, management, async_job
         """
         url = f"{self.base_url}/channelBanners/insert"
         query_params = {
@@ -893,7 +893,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised for HTTP 4xx/5xx responses from the server during the deletion request.
         
         Tags:
-            delete, channel-section, management, important
+            delete, channel-section, management
         """
         url = f"{self.base_url}/channelSections"
         query_params = {
@@ -1003,7 +1003,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised for unsuccessful API requests (4xx/5xx status codes)
         
         Tags:
-            retrieve, comments, pagination, youtube-api, rest, data-fetch, important
+            retrieve, comments, pagination, youtube-api, rest, data-fetch
         """
         url = f"{self.base_url}/commentThreads"
         query_params = {
@@ -1080,7 +1080,7 @@ class YoutubeApp(APIApplication):
             requests.exceptions.HTTPError: Raised if the HTTP request returns an unsuccessful status code.
         
         Tags:
-            get, fetch, guide-categories, api-call, important
+            get, fetch, guide-categories, api-call
         """
         url = f"{self.base_url}/guideCategories"
         query_params = {
@@ -1112,7 +1112,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised for unsuccessful API requests (4XX/5XX status codes).
         
         Tags:
-            fetch, i18n, languages, api-client, important
+            fetch, i18n, languages, api-client
         """
         url = f"{self.base_url}/i18nLanguages"
         query_params = {k: v for k, v in [("hl", hl), ("part", part)] if v is not None}
@@ -1135,7 +1135,7 @@ class YoutubeApp(APIApplication):
             HTTPError: If the API request fails with a 4XX/5XX status code.
         
         Tags:
-            list, regions, i18n, api, important
+            list, regions, i18n, api
         """
         url = f"{self.base_url}/i18nRegions"
         query_params = {k: v for k, v in [("hl", hl), ("part", part)] if v is not None}
@@ -1161,7 +1161,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised when the HTTP request returns an unsuccessful status code.
         
         Tags:
-            delete, livestream, youtube, api, important
+            delete, livestream, youtube, api
         """
         url = f"{self.base_url}/liveStreams"
         query_params = {
@@ -1192,7 +1192,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised if the API request fails due to invalid parameters, authorization issues, or server errors.
         
         Tags:
-            delete, playlist-items, management, important
+            delete, playlist-items, management
         """
         url = f"{self.base_url}/playlistItems"
         query_params = {
@@ -1219,7 +1219,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised when the API request fails, typically due to invalid permissions, non-existent playlist, or network issues.
         
         Tags:
-            delete, playlists, youtube-api, management, important
+            delete, playlists, youtube-api, management
         """
         url = f"{self.base_url}/playlists"
         query_params = {
@@ -1371,7 +1371,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: If the HTTP request fails or returns a non-200 status code.
         
         Tags:
-            fetch, list, pagination, filter, sponsors, api, important
+            fetch, list, pagination, filter, sponsors, api
         """
         url = f"{self.base_url}/sponsors"
         query_params = {
@@ -1402,7 +1402,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised for HTTP request failures (4XX/5XX status codes) during the deletion attempt.
         
         Tags:
-            delete, subscriptions, async-job, management, important
+            delete, subscriptions, async-job, management
         """
         url = f"{self.base_url}/subscriptions"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
@@ -1429,7 +1429,7 @@ class YoutubeApp(APIApplication):
             RequestException: Raised if there is an issue with the HTTP request, such as network or server errors.
         
         Tags:
-            fetch, youtube-api, async-job, important
+            fetch, youtube-api, async-job
         """
         url = f"{self.base_url}/superChatEvents"
         query_params = {
@@ -1461,7 +1461,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised if the HTTP request returns an unsuccessful status code.
         
         Tags:
-            thumbnail, youtube-api, video-management, async-job, important
+            thumbnail, youtube-api, video-management, async-job
         """
         url = f"{self.base_url}/thumbnails/set"
         query_params = {
@@ -1491,7 +1491,7 @@ class YoutubeApp(APIApplication):
             requests.RequestException: Raised if there is a problem with the HTTP request (e.g., network issues or invalid response).
         
         Tags:
-            fetch, management, abuse-report, video-content, important
+            fetch, management, abuse-report, video-content
         """
         url = f"{self.base_url}/videoAbuseReportReasons"
         query_params = {k: v for k, v in [("hl", hl), ("part", part)] if v is not None}
@@ -1516,7 +1516,7 @@ class YoutubeApp(APIApplication):
             requests.HTTPError: Raised when the API request fails with a non-success status code
         
         Tags:
-            fetch, video-categories, api-request, json-response, important
+            fetch, video-categories, api-request, json-response
         """
         url = f"{self.base_url}/videoCategories"
         query_params = {
@@ -1548,7 +1548,7 @@ class YoutubeApp(APIApplication):
             HTTPError: Raised if the HTTP request returns an unsuccessful status code.
         
         Tags:
-            delete, groupitems, management, important
+            delete, groupitems, management
         """
         url = f"{self.base_url}/groupItems"
         query_params = {
@@ -1575,7 +1575,7 @@ class YoutubeApp(APIApplication):
             requests.exceptions.HTTPError: Raised for invalid requests, authentication failures, or server errors during deletion.
         
         Tags:
-            delete, management, async_job, api, important
+            delete, management, async_job, api
         """
         url = f"{self.base_url}/groups"
         query_params = {
@@ -1622,7 +1622,7 @@ class YoutubeApp(APIApplication):
             requests.exceptions.HTTPError: Raised when the API request fails due to invalid parameters, authentication issues, or server errors
         
         Tags:
-            fetch, report, api, filter, sort, metrics, management, important
+            fetch, report, api, filter, sort, metrics, management
         """
         url = f"{self.base_url}/reports"
         query_params = {
