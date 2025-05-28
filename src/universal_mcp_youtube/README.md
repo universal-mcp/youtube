@@ -1,10 +1,10 @@
-# Youtube MCP Server
+# YoutubeApp MCP Server
 
-An MCP Server for the Youtube API.
+An MCP Server for the YoutubeApp API.
 
 ## 🛠️ Tool List
 
-This is automatically generated from OpenAPI schema for the Youtube API.
+This is automatically generated from OpenAPI schema for the YoutubeApp API.
 
 
 | Tool | Description |
