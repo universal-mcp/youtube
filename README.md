@@ -1,6 +1,6 @@
 # Youtube Universal MCP Server
 
-This repository contains an implementation of an Youtube Universal MCP (Model Context Protocol) server. It provides a standardized interface for interacting with Youtube's SEO and backlink analysis tools through a unified API.
+This repository contains an implementation of an Youtube Universal MCP (Model Context Protocol) server. It provides a standardized interface for interacting with Youtube's tools and services through a unified API.
 
 The server is built using the Universal MCP framework.
 
