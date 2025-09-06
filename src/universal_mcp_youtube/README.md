@@ -16,7 +16,7 @@ This is automatically generated from OpenAPI schema for the YoutubeApp API.
 | `get_media_resource_name` | Retrieves a media resource by name and returns its JSON representation. |
 | `get_reporttypes` | Retrieves a paginated list of report types from the API with optional filtering. |
 | `delete_captions` | Deletes specified captions from a YouTube resource and returns the API response. |
-| `get_captions` | Retrieves caption tracks for a specified video ID from a remote API, supporting optional query parameters for request customization. |
+| `get_captions` | Retrieves the captions text for a specified video ID on youtube |
 | `delete_comments` | Deletes a comment or comments from the server based on the specified ID. |
 | `add_comments_mark_as_spam` | Marks a comment as spam by sending a POST request to the API endpoint. |
 | `add_comments_set_moderation_status` | Sets the moderation status for a comment and optionally bans the author through a POST request to a defined endpoint. |
