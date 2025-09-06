@@ -2,6 +2,7 @@ from typing import Any
 
 from universal_mcp.applications import APIApplication
 from universal_mcp.integrations import Integration
+from youtube_transcript_api import YouTubeTranscriptApi
 
 
 class YoutubeApp(APIApplication):
@@ -273,45 +274,36 @@ class YoutubeApp(APIApplication):
         response.raise_for_status()
         return response.json()
 
-    def get_captions(
-        self, id, onBehalfOf=None, onBehalfOfContentOwner=None, tfmt=None, tlang=None
-    ) -> Any:
+
+    def get_captions(self, video_id: str) -> str:
         """
-        Retrieves caption tracks for a specified video ID from a remote API, supporting optional query parameters for request customization.
+        Retrieves the captions text for a specified video ID on youtube
         
         Args:
-            id: The unique identifier for the target video (required)
-            onBehalfOf: ID of the user on whose behalf the request is made (default: None)
-            onBehalfOfContentOwner: ID of the content owner authorizing the request (default: None)
-            tfmt: Caption format code (e.g., 'srt', 'ttml') (default: None)
-            tlang: Language code for caption localization (default: None)
+            video_id: The unique identifier for the target video (required)
         
         Returns:
-            Parsed JSON response containing caption data
+            String containing the complete transcript text without timestamps
         
         Raises:
-            ValueError: Raised when required 'id' parameter is missing
-            requests.exceptions.HTTPError: Raised for failed API requests (4XX/5XX status codes)
+            ValueError: Raised when required 'video_id' parameter is missing
+            Exception: Raised when transcript cannot be retrieved (e.g., no captions available)
         
         Tags:
-            retrieve, captions, api-client, async-job
+            retrieve, transcript, text, captions
         """
-        if id is None:
-            raise ValueError("Missing required parameter 'id'")
-        url = f"{self.base_url}/captions/{id}"
-        query_params = {
-            k: v
-            for k, v in [
-                ("onBehalfOf", onBehalfOf),
-                ("onBehalfOfContentOwner", onBehalfOfContentOwner),
-                ("tfmt", tfmt),
-                ("tlang", tlang),
-            ]
-            if v is not None
-        }
-        response = self._get(url, params=query_params)
-        response.raise_for_status()
-        return response.json()
+        if video_id is None:
+            raise ValueError("Missing required parameter 'video_id'")
+        
+        try:
+            api = YouTubeTranscriptApi()
+            transcript = api.fetch(video_id)
+            
+            transcript_text = ' '.join([snippet.text for snippet in transcript.snippets])
+            
+            return transcript_text
+        except Exception as e:
+            raise Exception(f"Failed to retrieve transcript for video {video_id}: {str(e)}")
 
     def delete_comments(self, id=None) -> Any:
         """
@@ -332,8 +324,7 @@ class YoutubeApp(APIApplication):
         url = f"{self.base_url}/comments"
         query_params = {k: v for k, v in [("id", id)] if v is not None}
         response = self._delete(url, params=query_params)
-        response.raise_for_status()
-        return response.json()
+        return self._handle_response(response)
 
     def add_comments_mark_as_spam(self, id=None) -> Any:
         """
